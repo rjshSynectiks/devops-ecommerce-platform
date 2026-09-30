@@ -35,3 +35,8 @@ docker-compose.override.yml
 # Temporary
 tmp/
 temp/
+# Local database backup
+infrastructure/kubernetes/product-service/postgres-backup.sql
+
+# Kubernetes secrets
+infrastructure/kubernetes/product-service/postgres-secret.yaml
