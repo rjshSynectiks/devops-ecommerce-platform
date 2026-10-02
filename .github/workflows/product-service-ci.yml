@@ -72,3 +72,39 @@ jobs:
       - name: Push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: docker push rjshsynectiks/ecommerce-product-service:${{ github.sha }}
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Verify deployment environment
+        shell: powershell
+        run: |
+          Write-Host "Runner: $env:COMPUTERNAME"
+          kubectl version --client
+          kubectl config current-context
+          kubectl get nodes
+          & "$env:USERPROFILE\bin\helm.exe" version
+
+      - name: Deploy with Helm
+        shell: powershell
+        run: |
+          & "$env:USERPROFILE\bin\helm.exe" upgrade product-service `
+            .\infrastructure\helm\product-service `
+            --namespace ecommerce `
+            --set image.tag="${{ github.sha }}" `
+            --wait `
+            --timeout 5m
+
+      - name: Verify deployment
+        shell: powershell
+        run: |
+          kubectl rollout status deployment/product-service -n ecommerce --timeout=180s
+          kubectl get pods -n ecommerce -l app=product-service
+          kubectl get deployment product-service -n ecommerce -o jsonpath="{.spec.template.spec.containers[0].image}"
+          Write-Host ""
