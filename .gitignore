@@ -40,3 +40,4 @@ infrastructure/kubernetes/product-service/postgres-backup.sql
 
 # Kubernetes secrets
 infrastructure/kubernetes/product-service/postgres-secret.yaml
+infrastructure/helm/product-service/rendered.yaml

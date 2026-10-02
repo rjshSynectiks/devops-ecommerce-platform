@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: rjshsynectiks/ecommerce-product-service
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+config:
+  configMapName: product-service-config
+
+secret:
+  secretName: postgres-secret
+
+probes:
+  readiness:
+    path: /actuator/health/readiness
+    port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  liveness:
+    path: /actuator/health/liveness
+    port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 15
+
+resources: {}
+
+autoscaling:
+  enabled: false
