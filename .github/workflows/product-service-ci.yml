@@ -54,3 +54,6 @@ jobs:
       - name: Build application
         working-directory: services/product-service
         run: mvn -B -DskipTests package
+
+      - name: Build Docker image
+        run: docker build -t ecommerce-product-service:${{ github.sha }} ./services/product-service
