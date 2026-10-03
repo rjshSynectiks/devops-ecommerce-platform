@@ -98,6 +98,8 @@ jobs:
             .\infrastructure\helm\product-service `
             --namespace ecommerce `
             --set image.tag="${{ github.sha }}" `
+            --server-side=true `
+            --force-conflicts=true `
             --wait `
             --timeout 5m
 
