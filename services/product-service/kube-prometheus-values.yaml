@@ -1,0 +1,7 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: "hitthelife1@"
+  persistence:
+    enabled: true
+    size: 2Gi
