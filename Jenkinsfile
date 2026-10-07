@@ -34,5 +34,11 @@ pipeline {
                 }
             }
         }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'services/product-service/target/*.jar', fingerprint: true
+            }
+        }
     }
 }
