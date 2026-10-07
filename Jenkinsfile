@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -11,6 +12,7 @@ pipeline {
         stage('Verify') {
             steps {
                 echo 'Jenkins successfully checked out the devops-ecommerce-platform repository.'
+
                 sh 'java -version'
 
                 dir('services/product-service') {
@@ -31,6 +33,14 @@ pipeline {
             steps {
                 dir('services/product-service') {
                     sh './mvnw package -DskipTests'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('services/product-service') {
+                    sh 'docker build -t rjshsynectiks/ecommerce-product-service:${BUILD_NUMBER} .'
                 }
             }
         }
