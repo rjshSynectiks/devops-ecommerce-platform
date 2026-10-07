@@ -22,7 +22,7 @@ pipeline {
         stage('Build and Test') {
             steps {
                 dir('services/product-service') {
-                    sh './mvnw test'
+                    sh 'SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/ecommerce ./mvnw test'
                 }
             }
         }
