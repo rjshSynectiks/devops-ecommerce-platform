@@ -37,10 +37,21 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build and Push') {
             steps {
                 dir('services/product-service') {
-                    sh 'docker build -t rjshsynectiks/ecommerce-product-service:${BUILD_NUMBER} .'
+                    script {
+                        docker.withRegistry(
+                            'https://index.docker.io/v1/',
+                            'dockerhub-credentials'
+                        ) {
+                            def image = docker.build(
+                                "rjshsynectiks/ecommerce-product-service:${BUILD_NUMBER}"
+                            )
+
+                            image.push()
+                        }
+                    }
                 }
             }
         }
