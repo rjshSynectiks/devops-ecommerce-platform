@@ -55,6 +55,21 @@ pipeline {
                 }
             }
         }
+        stage('Test Kubernetes Access') {
+    steps {
+        withCredentials([
+            file(
+                credentialsId: 'docker-desktop-ecommerce-kubeconfig',
+                variable: 'KUBECONFIG'
+            )
+        ]) {
+            sh '''
+                echo "Testing Kubernetes access..."
+                kubectl --kubeconfig "$KUBECONFIG" get deployment product-service -n ecommerce
+            '''
+        }
+    }
+}
 
         stage('Archive Artifact') {
             steps {
