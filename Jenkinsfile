@@ -65,7 +65,7 @@ pipeline {
         ]) {
             sh '''
                 echo "Testing Kubernetes access..."
-                kubectl --kubeconfig "$KUBECONFIG" get deployment product-service -n ecommerce
+                kubectl --kubeconfig "$KUBECONFIG" --tls-server-name desktop-control-plane get deployment product-service -n ecommerce
             '''
         }
     }
