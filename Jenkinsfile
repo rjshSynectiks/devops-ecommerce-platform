@@ -55,21 +55,50 @@ pipeline {
                 }
             }
         }
+
         stage('Test Kubernetes Access') {
-    steps {
-        withCredentials([
-            file(
-                credentialsId: 'docker-desktop-ecommerce-kubeconfig',
-                variable: 'KUBECONFIG'
-            )
-        ]) {
-            sh '''
-                echo "Testing Kubernetes access..."
-                kubectl --kubeconfig "$KUBECONFIG" --tls-server-name desktop-control-plane get deployment product-service -n ecommerce
-            '''
+            steps {
+                withCredentials([
+                    file(
+                        credentialsId: 'docker-desktop-ecommerce-kubeconfig',
+                        variable: 'KUBECONFIG'
+                    )
+                ]) {
+                    sh '''
+                        echo "Testing Kubernetes access..."
+
+                        kubectl --kubeconfig "$KUBECONFIG" \
+                          --tls-server-name desktop-control-plane \
+                          get deployment product-service -n ecommerce
+                    '''
+                }
+            }
         }
-    }
-}
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([
+                    file(
+                        credentialsId: 'docker-desktop-ecommerce-kubeconfig',
+                        variable: 'KUBECONFIG'
+                    )
+                ]) {
+                    sh '''
+                        echo "Deploying Product Service to Kubernetes..."
+
+                        kubectl --kubeconfig "$KUBECONFIG" \
+                          --tls-server-name desktop-control-plane \
+                          -n ecommerce set image deployment/product-service \
+                          product-service=rjshsynectiks/ecommerce-product-service:${BUILD_NUMBER}
+
+                        kubectl --kubeconfig "$KUBECONFIG" \
+                          --tls-server-name desktop-control-plane \
+                          -n ecommerce rollout status deployment/product-service \
+                          --timeout=120s
+                    '''
+                }
+            }
+        }
 
         stage('Archive Artifact') {
             steps {
