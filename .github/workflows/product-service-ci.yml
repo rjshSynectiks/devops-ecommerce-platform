@@ -74,7 +74,7 @@ jobs:
         run: docker push rjshsynectiks/ecommerce-product-service:${{ github.sha }}
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: false
     needs: test
     runs-on: [self-hosted, Windows, X64]
 
